@@ -32,7 +32,7 @@ from diffusion.attend import Attend
 
 from diffusion.version import __version__
 
-from data.dataset_h5 import H5ImagesDataset
+from utils.dataset_h5 import H5ImagesDataset
 # constants
 
 ModelPrediction =  namedtuple('ModelPrediction', ['pred_noise', 'pred_x_start'])
