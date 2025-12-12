@@ -35,14 +35,14 @@ class HSIVIConfig:
     f_simple: bool = True  # Use simplified F network for MNIST
     
     # HSIVI specific settings
-    n_discrete_steps: int = 11  # NFE + 1
+    n_discrete_steps: int = 6  # NFE + 1
     independent_log_gamma: bool = False  # Independent vs shared log_gamma
     image_gamma: bool = True  # Non-isotropic (pixel-wise) vs isotropic gamma
     skip_type: str = "quad"  # 'uniform' or 'quad' for timestep selection
     
     # Training settings
     n_train_iters: int = 100000
-    training_batch_size: int = 64
+    training_batch_size: int = 128
     phi_learning_rate: float = 1.6e-5
     f_learning_rate: float = 8e-5
     f_learning_times: int = 20  # F network updates per phi update
@@ -52,6 +52,7 @@ class HSIVIConfig:
     beta2: float = 0.999
     weight_decay: float = 0.0
     grad_clip: float = 1.0
+    warmup_steps: int = 1000  # Linear warmup steps (0 to disable)
     
     # EMA settings
     ema_decay: float = 0.9999
@@ -67,17 +68,16 @@ class HSIVIConfig:
     beta_end: float = 0.02
     
     # Logging and saving
-    workdir: str = "./work_dir/hsivi_colored_mnist"
+    workdir: str = f"./work_dir/hsivi_{n_discrete_steps-1}"
     save_every: int = 5000
-    sample_every: int = 1000
+    sample_every: int = 5000
     log_every: int = 100
     num_samples: int = 64
     
     # Evaluation
-    testing_batch_size: int = 64
     sampling_batch_size: int = 64
     fid_num_samples: int = 10000
-    fid_every: int = 10000  # Calculate FID every N steps (0 to disable)
+    fid_every: int = 5000  # Calculate FID every N steps (0 to disable)
     
     # Hardware
     n_gpus_per_node: int = 1

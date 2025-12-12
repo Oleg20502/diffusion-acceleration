@@ -2,16 +2,28 @@
 # HSIVI Training Script for Colored MNIST
 # Adapted from https://github.com/longinYu/HSIVI
 
+export CUDA_VISIBLE_DEVICES="2"
+
 # Default configuration
-WORKDIR="./work_dir/hsivi_colored_mnist"
+WORKDIR="./work_dir/hsivi_5_lr_8e-5_8e-5"
 DATA_DIR="./data"
 PRETRAINED_MODEL="./ckpts/model-5.pt"  # Your pretrained diffusion model
 
 # Training parameters
 N_TRAIN_ITERS=100000
-BATCH_SIZE=64
-N_DISCRETE_STEPS=11  # NFE + 1 = 10 + 1
-PHI_LR=0.000016
+BATCH_SIZE=256
+N_DISCRETE_STEPS=6  # NFE + 1 = 10 + 1
+
+SAVE_EVERY=10
+SAMPLE_EVERY=10
+LOG_EVERY=5
+NUM_SAMPLES=16
+
+FID_EVERY=10
+FID_NUM_SAMPLES=1000
+SAMPLING_BATCH_SIZE=$BATCH_SIZE
+
+PHI_LR=0.00008
 F_LR=0.00008
 F_LEARNING_TIMES=20
 SKIP_TYPE="quad"
@@ -38,6 +50,13 @@ python -m hsivi_train.train \
     --n_train_iters ${N_TRAIN_ITERS} \
     --training_batch_size ${BATCH_SIZE} \
     --n_discrete_steps ${N_DISCRETE_STEPS} \
+    --save_every ${SAVE_EVERY} \
+    --sample_every ${SAMPLE_EVERY} \
+    --log_every ${LOG_EVERY} \
+    --num_samples ${NUM_SAMPLES} \
+    --fid_every ${FID_EVERY} \
+    --fid_num_samples ${FID_NUM_SAMPLES} \
+    --sampling_batch_size ${SAMPLING_BATCH_SIZE} \
     --phi_learning_rate ${PHI_LR} \
     --f_learning_rate ${F_LR} \
     --f_learning_times ${F_LEARNING_TIMES} \

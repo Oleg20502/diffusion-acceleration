@@ -58,6 +58,18 @@ def parse_args():
                        help='Override f learning rate')
     parser.add_argument('--f_learning_times', type=int, default=None,
                        help='Override f network updates per phi update')
+    parser.add_argument('--warmup_steps', type=int, default=None,
+                       help='Learning rate warmup steps (0 to disable)')
+    parser.add_argument('--save_every', type=int, default=None,
+                       help='Save checkpoint every N steps')
+    parser.add_argument('--sample_every', type=int, default=None,
+                       help='Sample images every N steps')
+    parser.add_argument('--log_every', type=int, default=None,
+                       help='Log metrics every N steps')
+    parser.add_argument('--num_samples', type=int, default=None,
+                       help='Number of samples to generate')
+    parser.add_argument('--sampling_batch_size', type=int, default=None,
+                       help='Batch size for sampling')
     parser.add_argument('--fid_every', type=int, default=None,
                        help='Calculate FID every N steps (0 to disable)')
     parser.add_argument('--fid_num_samples', type=int, default=None,
@@ -162,6 +174,8 @@ def main():
         config.f_learning_rate = args.f_learning_rate
     if args.f_learning_times:
         config.f_learning_times = args.f_learning_times
+    if args.warmup_steps is not None:
+        config.warmup_steps = args.warmup_steps
     if args.fid_every is not None:
         config.fid_every = args.fid_every
     if args.fid_num_samples:
@@ -194,6 +208,7 @@ def main():
     print(f"Phi LR: {config.phi_learning_rate}")
     print(f"F LR: {config.f_learning_rate}")
     print(f"F updates per phi: {config.f_learning_times}")
+    print(f"Warmup steps: {config.warmup_steps}" if config.warmup_steps > 0 else "Warmup: disabled")
     print(f"Skip type: {config.skip_type}")
     print(f"FID every: {config.fid_every} steps" if config.fid_every > 0 else "FID: disabled")
     print(f"FID samples: {config.fid_num_samples}")

@@ -247,6 +247,28 @@ class HSIVITrainer:
             betas=(config.beta1, config.beta2),
             weight_decay=config.weight_decay
         )
+        
+        # Store base learning rates for warmup
+        self.phi_base_lr = config.phi_learning_rate
+        self.f_base_lr = config.f_learning_rate
+        self.warmup_steps = config.warmup_steps
+    
+    def _get_warmup_lr(self, base_lr: float, step: int) -> float:
+        """Calculate learning rate with linear warmup."""
+        if self.warmup_steps <= 0 or step >= self.warmup_steps:
+            return base_lr
+        return base_lr * (step / self.warmup_steps)
+    
+    def _update_learning_rate(self):
+        """Update learning rate based on current step (warmup)."""
+        phi_lr = self._get_warmup_lr(self.phi_base_lr, self.step)
+        f_lr = self._get_warmup_lr(self.f_base_lr, self.step)
+        
+        for param_group in self.phi_optimizer.param_groups:
+            param_group['lr'] = phi_lr
+        
+        for param_group in self.f_optimizer.param_groups:
+            param_group['lr'] = f_lr
     
     def q_sample(self, x_start: torch.Tensor, t: torch.Tensor, noise: Optional[torch.Tensor] = None) -> torch.Tensor:
         """Sample from q(x_t | x_0) - forward diffusion process."""
@@ -689,6 +711,9 @@ class HSIVITrainer:
                 running_metrics[k].append(v)
             
             self.step += 1
+            
+            # Update learning rate (warmup)
+            self._update_learning_rate()
             
             # Logging
             if self.step % config.log_every == 0:
